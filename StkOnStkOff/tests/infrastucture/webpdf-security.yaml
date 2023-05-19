@@ -1,0 +1,97 @@
+Resources:
+  WebServerSecurityGroup:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupDescription: Allow http and ssh to client host
+      VpcId: !ImportValue webpdf-vpc
+      SecurityGroupIngress:
+        - IpProtocol: tcp
+          FromPort: 8080
+          ToPort: 8080
+          CidrIp: 0.0.0.0/0
+        - IpProtocol: tcp
+          FromPort: 80
+          ToPort: 80
+          CidrIp: 0.0.0.0/0
+        - IpProtocol: tcp
+          FromPort: 22
+          ToPort: 22
+          CidrIp: 0.0.0.0/0
+
+  WebEC2InstanceRole:
+    Type: "AWS::IAM::Role"
+    Properties:
+      ManagedPolicyArns:
+        - "arn:aws:iam::aws:policy/CloudWatchFullAccess"
+        - "arn:aws:iam::aws:policy/AmazonS3FullAccess"
+        - "arn:aws:iam::aws:policy/IAMFullAccess"
+        - "arn:aws:iam::aws:policy/AmazonEC2FullAccess"
+        - "arn:aws:iam::aws:policy/AWSCloudFormationFullAccess"
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          -
+            Effect: "Allow"
+            Principal:
+              Service:
+                - "ec2.amazonaws.com"
+            Action:
+              - "sts:AssumeRole"
+      Path: "/"
+      RoleName: WebEC2InstanceRole
+  WebEC2InstanceProfile:
+    Type: "AWS::IAM::InstanceProfile"
+    Properties:
+      Path: "/"
+      Roles:
+        -
+          Ref: "WebEC2InstanceRole"
+  CodeDeployRole:
+    Type: "AWS::IAM::Role"
+    Properties:
+      ManagedPolicyArns:
+        - "arn:aws:iam::aws:policy/service-role/AWSCodeDeployRole"
+      Policies:
+        - PolicyName: LaunchTemplate
+          PolicyDocument:
+            Version: "2012-10-17"
+            Statement:
+              - Effect: Allow
+                Action:
+                  - 'ec2:RunInstances'
+                  - 'ec2:CreateTags'
+                  - 'iam:PassRole'
+                Resource: '*'
+
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          -
+            Effect: "Allow"
+            Principal:
+              Service:
+                - "codedeploy.amazonaws.com"
+            Action:
+              - "sts:AssumeRole"
+      Path: "/"
+      RoleName: !Sub "${AWS::StackName}-CodeDeployRole"
+
+Outputs:
+  WebSecurityGroupId:
+    Description: SG to allow ssh and http into an EC2 instance
+    Value: !GetAtt WebServerSecurityGroup.GroupId
+    Export:
+      Name: !Sub "${AWS::StackName}-WebSecurityGroupId"
+
+  WebEC2InstanceProfile:
+    Description: Role that will allow EC2 communication to other AWS services such as cloudwatch and S3
+    Value: !Ref  WebEC2InstanceProfile
+    Export:
+      Name: !Sub "${AWS::StackName}-WebEC2InstanceProfile"
+
+  WebEC2InstanceProfileArn:
+    Description: Role that will allow EC2 communication to other AWS services such as cloudwatch and S3
+    Value: !GetAtt  WebEC2InstanceProfile.Arn
+    Export:
+      Name: !Sub "${AWS::StackName}-WebEC2InstanceProfileArn"
+
