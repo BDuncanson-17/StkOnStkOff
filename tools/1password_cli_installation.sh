@@ -20,7 +20,7 @@ curl -sS https://downloads.1password.com/linux/keys/1password.asc | \
 sudo apt update && sudo apt install 1password-cli
 
 # Check that 1Password CLI was installed successfully
-echo (op --version)
+echo $(op --version)
 
 #!/bin/bash
 
@@ -32,20 +32,6 @@ sudo sh -c 'echo -e "[1password]\nname=1Password Stable Channel\nbaseurl=https:/
 
 # Install 1Password CLI
 sudo dnf check-update -y 1password-cli && sudo dnf install 1password-cli
-
-# Check that 1Password CLI was installed successfully
-op --version
-
-#!/bin/sh
-
-# Add 1Password CLI to your list of repositories
-echo "https://downloads.1password.com/linux/alpinelinux/stable/" >> /etc/apk/repositories
-
-# Add the public key to validate the APK to your keys directory
-wget https://downloads.1password.com/linux/keys/alpinelinux/support@1password.com-61ddfc31.rsa.pub -P /etc/apk/keys
-
-# Install 1Password CLI
-apk update && apk add 1password-cli
 
 # Check that 1Password CLI was installed successfully
 op --version
