@@ -22,7 +22,6 @@ sudo apt update && sudo apt install 1password-cli
 # Check that 1Password CLI was installed successfully
 echo (op --version)
 
-
 #!/bin/bash
 
 # Import the public key
