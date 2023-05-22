@@ -1,0 +1,9 @@
+LICENSE
+README.rst
+pyproject.toml
+setup.cfg
+StkOnStkOff.egg-info/PKG-INFO
+StkOnStkOff.egg-info/SOURCES.txt
+StkOnStkOff.egg-info/dependency_links.txt
+StkOnStkOff.egg-info/requires.txt
+StkOnStkOff.egg-info/top_level.txt

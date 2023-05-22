@@ -1,5 +1,11 @@
 .idea
-.idea/*
 
-.env
-.env/*
+.venv
+
+/.venv/
+
+
+StkOnStkOff.egg-info/
+StkOnStkOff.egg-info/*
+
+
