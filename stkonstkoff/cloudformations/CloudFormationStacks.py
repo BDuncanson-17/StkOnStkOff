@@ -1,4 +1,7 @@
 import boto3
+import regions as regions
+
+from stkonstkoff.__inti__ import DEFAULT_SESSION
 
 aws_regions = ['us-east-1', 'us-east-2', 'us-west-1', 'us-west-2', 'af-south-1', 'ap-east-1', 'ap-south-1',
                'ap-northeast-3', 'ap-northeast-2', 'ap-southeast-1', 'ap-southeast-2', 'ap-northeast-1',
@@ -7,8 +10,7 @@ aws_regions = ['us-east-1', 'us-east-2', 'us-west-1', 'us-west-2', 'af-south-1',
 
 
 class CloudFormationStacks:
-    def __init__(self, regions=aws_regions):
-        self.cf_client = None
+    def __init__(self, session=DEFAULT_SESSION):
         self._regions = regions
         self._selected_region = None
         self._region_stack_names = {}
