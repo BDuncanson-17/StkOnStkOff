@@ -1,6 +1,6 @@
 #!/bin/bash
-
-# Add the key for the 1Password Apt repository
+if debian
+# Debian
 curl -sS https://downloads.1password.com/linux/keys/1password.asc | \
  sudo gpg --dearmor --output /usr/share/keyrings/1password-archive-keyring.gpg
 
@@ -20,11 +20,9 @@ curl -sS https://downloads.1password.com/linux/keys/1password.asc | \
 sudo apt update && sudo apt install 1password-cli
 
 # Check that 1Password CLI was installed successfully
-echo $(op --version)
 
-#!/bin/bash
+if yum
 
-# Import the public key
 sudo rpm --import https://downloads.1password.com/linux/keys/1password.asc
 
 # Configure the repository information
@@ -34,4 +32,12 @@ sudo sh -c 'echo -e "[1password]\nname=1Password Stable Channel\nbaseurl=https:/
 sudo dnf check-update -y 1password-cli && sudo dnf install 1password-cli
 
 # Check that 1Password CLI was installed successfully
+op --version
+
+
+------ if yum
+
+sudo rpm --import https://downloads.1password.com/linux/keys/1password.asc
+sudo sh -c 'echo -e "[1password]\nname=1Password Stable Channel\nbaseurl=https://downloads.1password.com/linux/rpm/stable/\$basearch\nenabled=1\ngpgcheck=1\nrepo_gpgcheck=1\ngpgkey=\"https://downloads.1password.com/linux/keys/1password.asc\"" > /etc/yum.repos.d/1password.repo'
+sudo dnf check-update -y 1password-cli && sudo dnf install 1password-cli
 op --version

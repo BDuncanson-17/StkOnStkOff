@@ -1,4 +1,6 @@
-alias_exists() {
+
+
+function alias_exists()
   local alias_name=$1
 
   # Check if the alias exists in the current shell session
