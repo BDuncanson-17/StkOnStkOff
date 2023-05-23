@@ -1,7 +1,5 @@
 import os
 import boto3
-
-
 class CloudFormationTemplate:
     """
     Represents a CloudFormation template.

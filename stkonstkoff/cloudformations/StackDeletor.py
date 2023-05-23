@@ -7,7 +7,6 @@ import subprocess
 class StackDeletor:
     def __init__(self):
         self.cf_client = boto3.client('cloudformation')
-        self.check_aws_credentials()
 
 
     def get_all_stack_names(self):
@@ -60,31 +59,4 @@ class StackDeletor:
         for stack_name in stack_names:
             self.delete_stack(stack_name)
 
-    @staticmethod
-    def find_files_with_cft_lint(directory):
-        json_yaml_files = []
-
-        for root, dirs, files in os.walk(directory):
-            for file in files:
-                if file.endswith('.json') or file.endswith('.yaml') or file.endswith('.yml'):
-                    file_path = os.path.join(root, file)
-                    if StackDeletor.run_cft_lint(file_path):
-                        json_yaml_files.append(file_path)
-
-        return json_yaml_files
-
-    @staticmethod
-    def run_cft_lint(file_path):
-        try:
-            subprocess.check_output(['cft-lint', file_path])
-            return True
-        except subprocess.CalledProcessError:
-            return False
-
-    @staticmethod
-    def get_template_body(template_source):
-        try:
-            with open(template_source, 'r') as template_file:
-                return template_file.read()
-        except FileNotFoundError:
-            return False
+print(StackDeletor().delete_all_stacks())
