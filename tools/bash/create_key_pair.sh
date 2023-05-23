@@ -6,33 +6,47 @@ display_help() {
     echo "Generate a .pem file from input and save it as output."
 }
 
-# Check if help option is passed
-if [[ "$1" == "-h" || "$1" == "--help" ]]; then
-    display_help
-    exit 0
+
+#!/bin/bash
+
+# Check if openssl command is available
+if ! command -v openssl >/dev/null 2>&1; then
+  echo "openssl command not found. Installing openssl..."
+
+  # Check if apt package manager is available
+  if command -v apt >/dev/null 2>&1; then
+    sudo apt update
+    sudo apt install -y openssl
+  # Check if yum package manager is available
+  elif command -v yum >/dev/null 2>&1; then
+    sudo yum update
+    sudo yum install -y openssl
+  else
+    echo "Error: Could not find a supported package manager (apt or yum) to install openssl."
+    exit 1
+  fi
 fi
 
-# Check if two arguments are provided
-if [[ $# -ne 2 ]]; then
-    echo "Error: Invalid number of arguments."
-    display_help
-    exit 1
+# Output file paths
+private_key_file="private_key.pem"
+public_key_file="public_key.pem"
+
+# Key size (in bits)
+key_size=2048
+
+# Check if private key file already exists
+if [ -f "$private_key_file" ]; then
+  echo "Private key file already exists: $private_key_file"
+  exit 1
 fi
 
-input="$1"
-output="$2"
+# Generate the key pair
+openssl genpkey -algorithm RSA -out "$private_key_file" -pkeyopt rsa_keygen_bits:"$key_size"
+openssl rsa -pubout -in "$private_key_file" -out "$public_key_file"
 
-# Generate .pem file
-openssl rsa -pubout -in "$input" -out "$output"
+# Set appropriate permissions on private key file
+chmod 600 "$private_key_file"
 
-is_package_installed() {
-    dpkg -s "$1" >/dev/null 2>&1
-}
-
-# Get the array of packages from command-line arguments
-packages=("$@")
-
-# Check if any packages were provided
-if [[ ${#packages[@]} -eq 0 ]]; then
-    echo "No packages provided. Exiting."
-    exit 1
+echo "Public-private key pair generated:"
+echo "Private key: $private_key_file"
+echo "Public key: $public_key_file"
