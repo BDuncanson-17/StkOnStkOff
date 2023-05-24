@@ -2,32 +2,33 @@ import boto3
 import subprocess
 import os
 
-
+curr_path = os.path.dirname(os.path.abspath(__file__))
 class StackCreator:
-    def __init__(self, template_directory="../../test/cft"):
+
+    def __init__(self, template_dir=curr_path):
         self.cf_client = boto3.client('cloudformation')
-        self.template_files = []
-        self.template_files = self.find_json_yaml_files(template_directory)
-        self.template_map = None
+        self.template_dir = template_dir
+        self.template_files = self.find_json_yaml_files()
+        self.template_map = {}
 
     @staticmethod
     def prompt_prefix_string():
         add_prefix = str(
-            input("Would you like to a prefix string to the stacks in your set like webpdf- (y/n):\n")).lower()
+            input("Would you like to add a prefix string to the stacks in your set like webpdf- (y/n):\n")).lower()
         if add_prefix == 'n' or add_prefix == 'no':
             return ""
         prefix_str = input("Add the string you want all your stacks to start with:\n")
         return prefix_str
 
     def create_stack_map(self, prefix_str=None):
-        templates = self.template_files
-        if templates is not None and len(templates) > 1:
+        if len(self.template_files) <= 1:
             if len(self.template_files) == 0:
                 return {}
-            return {input("Enter the name of the stack:\n"): self.template_files[0]}
+            else:
+                return {input("Enter the name of the stack:\n"): self.template_files[0]}
 
         stack_template_map = {}
-        if prefix_str is None:
+        if prefix_str is None or prefix_str == "":
             prefix_str = self.prompt_prefix_string()
 
         num_stacks = int(input("Enter the number of stacks (1-20):\n"))
@@ -37,7 +38,7 @@ class StackCreator:
             for j, template_name in enumerate(self.template_files):
                 print(f"{j + 1}. {os.path.basename(template_name)}")
 
-            selected_template_index = int(input("Enter the number corresponding to the template for stack {i}:\n"))
+            selected_template_index = int(input(f"Enter the number corresponding to the template for stack {i+1}:\n"))
             if 1 <= selected_template_index <= len(self.template_files):
                 selected_template = self.template_files[selected_template_index - 1]
                 stack_name = input(f"Enter the stack name:\n{prefix_str}")
@@ -47,20 +48,16 @@ class StackCreator:
 
         return stack_template_map
 
-    @staticmethod
-    def find_json_yaml_files(directory):
+    def find_json_yaml_files(self):
         json_yaml_files = []
 
-        for root, dirs, files in os.walk(directory):
+        for root, dirs, files in os.walk(self.template_dir):
             for file in files:
                 if file.endswith(('.json', '.yaml', '.yml')):
                     file_path = os.path.join(root, file)
                     json_yaml_files.append(file_path)
 
         return json_yaml_files
-
-    def add_tempate(template_path):
-        template_path.template_files.append(template_path)
 
     @staticmethod
     def run_cft_lint(file_path):
@@ -70,7 +67,10 @@ class StackCreator:
         except subprocess.CalledProcessError:
             return False
 
-    def create_stacks(self, stack_mapping):
+    def create_stacks(self, stack_mapping=None):
+        if stack_mapping is None:
+            stack_mapping = self.template_map
+
         for stack_name, template_filepath in stack_mapping.items():
             try:
                 with open(template_filepath, 'r') as template_file:
@@ -105,6 +105,3 @@ class StackCreator:
                 break
 
 
-s = StackCreator("../../tests")
-s.create_stack_map()
-print(s.template_files)

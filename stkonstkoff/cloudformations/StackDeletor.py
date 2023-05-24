@@ -2,10 +2,11 @@ import argparse
 import boto3
 import time
 import os
-import subprocess
+from stkonstkoff.UserAuthentication import UserAccess
 
 class StackDeletor:
     def __init__(self):
+        self.user = UserAccess()
         self.cf_client = boto3.client('cloudformation')
 
 
@@ -59,4 +60,4 @@ class StackDeletor:
         for stack_name in stack_names:
             self.delete_stack(stack_name)
 
-print(StackDeletor().delete_all_stacks())
+StackDeletor().delete_all_stacks()

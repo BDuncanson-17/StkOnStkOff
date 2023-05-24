@@ -1,14 +1,14 @@
 param(
     [Parameter(Mandatory=$false)]
-    [Alias("-m")]
-    [Switch]$Make,
+    [Alias("-c")]
+    [Switch]$Create,
 
     [Parameter(Mandatory=$false)]
     [Alias("-d")]
     [Switch]$Delete
 )
 
-if ($Make) {
+if ($Create) {
     # Create the virtual environment
     & python -m venv .venv
     & .venv\Scripts\Activate.ps1
