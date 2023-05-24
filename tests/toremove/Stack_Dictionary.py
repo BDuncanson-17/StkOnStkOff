@@ -1,6 +1,5 @@
 import stkonstkoff.UserAuthentication
-import stkonstkoff.cloudformations.CloudFormationStacks as cft
-import os
+import tests.toremove.CloudFormationStacks as cft
 
 # Testing User Authorization
 

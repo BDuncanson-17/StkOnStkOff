@@ -6,8 +6,7 @@ build-backend = "setuptools.build_meta"
 profile = "black"
 line_length = 79
 honor_noqa = true
-src_paths = ["stkonstkoff", "tests"]
+src_paths = ["stkonstkoff"]
 
-[tool.black]
 line-length = 79
 skip_string_normalization = true

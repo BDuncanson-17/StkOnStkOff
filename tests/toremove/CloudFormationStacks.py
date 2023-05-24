@@ -1,6 +1,6 @@
 import boto3
 
-from stkonstkoff.UserAuthentication import STKONSTKOFFSESSION
+from stkonstkoff.UserAuthentication import *
 
 
 
@@ -102,5 +102,3 @@ if your_object.has_active_stacks():
             print(f"Error: Stack '{stack_name}' not found.")
             return None
 
-bd = CloudFormationStacks()
-print(bd.get_stack_names())

@@ -1,13 +1,25 @@
+
+from datetime import datetime
+
+# Get the current time
 class ErrorHandler:
     """
     Class for handling errors and generating error messages.
     """
 
     def __init__(self):
-        pass
+        self.error_messages = [
+            'Unknown Error'
+            'Object error'
+        ]
+        self.type = ["[Error]" "[Info]" "[Warning]"]
+
+
+
+
 
     @staticmethod
-    def handle_error(message):
+    def handle_error(error_number=0):
         """
         Handles an error and returns an error message string.
         Args:
@@ -15,7 +27,7 @@ class ErrorHandler:
         Returns:
             str: The formatted error message string.
         """
-        return f"[ERROR] {message}"
+        return f"[ERROR]\t{datetime.now(tz='cst')}\t{ErrorHandler.Error_Message[error_number]}"
 
 
 class Logger:
@@ -27,7 +39,7 @@ class Logger:
         pass
 
     @staticmethod
-    def log_info(message):
+    def Log(error_type=0,message=0):
         """
         Log a message with the info level and return the formatted log string.
         Args:
@@ -35,27 +47,5 @@ class Logger:
         Returns:
             str: The formatted info log string.
         """
-        return f"[INFO] {message}"
-
-    @staticmethod
-    def log_warning(message):
-        """
-        Log a message with the warning level and return the formatted log string.
-        Args:
-            message (str): The log message.
-        Returns:
-            str: The formatted warning log string.
-        """
-        return f"[WARNING] {message}"
-
-    @staticmethod
-    def log_error(message):
-        """
-        Log a message with the error level and return the formatted log string.
-        Args:
-            message (str): The log message.
-        Returns:
-            str: The formatted error log string.
-        """
-        return f"[ERROR] {message}"
+        return f"{ErrorHandler.ErrorType[error_type]} {ErrorHandler.ErrorMessage[message]}"
 

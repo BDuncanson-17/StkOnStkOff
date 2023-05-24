@@ -1,3 +1,0 @@
-
-class AWSUserAuthorization:
-    pass

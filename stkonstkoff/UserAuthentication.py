@@ -2,6 +2,7 @@ import boto3
 import botocore
 
 
+
 class UserAccess:
     """
     Class for managing user permissions for AWS services.
@@ -54,6 +55,3 @@ class UserAccess:
         return new_user.session
 
 
-STKONSTKOFFSESSION = UserAccess()
-
-print(STKONSTKOFFSESSION.attempts)
