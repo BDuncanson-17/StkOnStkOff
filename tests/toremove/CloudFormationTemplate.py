@@ -11,14 +11,14 @@ class CloudFormationTemplate:
         valid_template (bool): Indicates if the template is valid or not.
     """
 
-    def __init__(self, template_path):
+    def __init__(self):
         """
         Initialize a CloudFormationTemplate object.
 
         Args:
             template_path (str): The path to the CloudFormation template file.
         """
-        self._template_path = template_path
+        self._template_path = stkget_template_path()
         self._template_name = os.path.basename(template_path)
         self._template_body = self._load_template_body()
         self._valid_template = None

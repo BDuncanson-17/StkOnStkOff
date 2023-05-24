@@ -4,7 +4,7 @@ import os
 
 # Testing User Authorization
 
-stk = stkonstkoff.UserAuthentication.UserAccess()
+stk = stkonstkoff.UserAuthentication.UserAccess
 
 cft(stk.session)
 cft.current_stacks()

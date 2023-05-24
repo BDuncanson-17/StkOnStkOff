@@ -1,35 +1,56 @@
 import boto3
 
-import stkonstkoff.UserAuthentication
-import stkonstkoff.UserAuthentication as UserAuth
-
-import boto3
-import botocore
+from stkonstkoff.UserAuthentication import STKONSTKOFFSESSION
 
 
-class CloudFormationStacks:
-    """
-    Class for managing CloudFormation stacks.
-    """
 
-    def __init__(self):
-        """
-        Initializes CloudFormationStacks object.
-        """
-        self.user = stkonstkoff.UserAuthentication.UserAccess()
-        self.cf_client = self.user.session.client
-        self.stacks = self.current_stacks()
-        self.cft_perms = self.get_cft_permissions()
-    def current_stacks(self):
+class CFStacks:
+    def __init__(self,):
+
+        self.stacks = self.set_stacks()
+
+
+
+    def has_active_stacks(self):
+        response = self.cfn_client.list_stacks(
+            StackStatusFilter=['CREATE_IN_PROGRESS', 'CREATE_FAILED', 'CREATE_COMPLETE',
+                               'ROLLBACK_IN_PROGRESS', 'ROLLBACK_FAILED',
+                               'ROLLBACK_COMPLETE', 'DELETE_IN_PROGRESS',
+                               'DELETE_FAILED', 'UPDATE_IN_PROGRESS',
+                               'UPDATE_COMPLETE_CLEANUP_IN_PROGRESS',
+                               'UPDATE_COMPLETE', 'UPDATE_ROLLBACK_IN_PROGRESS',
+                               'UPDATE_ROLLBACK_FAILED', 'UPDATE_ROLLBACK_COMPLETE_CLEANUP_IN_PROGRESS',
+                               'UPDATE_ROLLBACK_COMPLETE', 'REVIEW_IN_PROGRESS'])
+        stacks = response['StackSummaries']
+        return len(stacks) > 0
+
+    def set_stacks(self):
+        if not self.has_active_stacks() or not self.cft_access['describe']:
+            print("There are either no stacks to set or you do not have permissions to access stack information")
+            return {}
+
+        stacks = {}
+        response = self.cfn_client.describe_stacks()
+        stacks = response["Stacks"]
+        return stacks
+
+
+# Example usage
+your_object = YourClassName()
+if your_object.has_active_stacks():
+    print
+    def current_stack_names(self):
         """
         Retrieves the list of current CloudFormation stacks.
 
         Returns:
             list: List of current CloudFormation stacks.
         """
-        response = self.user.session.client("cloudformation").describe_stacks()
-        stacks = response["Stacks"]
-        return stacks
+        if self.stacks is None or len(self.stacks) > 1:
+            print("Currently there are not active stacks")
+            return
+        stack_names = self.get_stack_names()
+
 
     def get_cft_permissions(self):
         """

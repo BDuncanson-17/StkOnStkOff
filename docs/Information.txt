@@ -1,0 +1,17 @@
+Format of a Cloud formation Describe() object
+Stacks:
+  - StackName: string
+    StackId: string
+    Description: string
+    Parameters:
+      - ParameterKey: string
+        ParameterValue: string
+        ...
+    Tags:
+      - Key: string
+        Value: string
+        ...
+    CreationTime: datetime
+    LastUpdatedTime: datetime
+    StackStatus: string
+    ...

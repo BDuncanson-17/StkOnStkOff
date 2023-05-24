@@ -6,7 +6,7 @@ from stkonstkoff.UserAuthentication import UserAccess
 
 class StackDeletor:
     def __init__(self):
-        self.user = UserAccess()
+        self.user = UserAccess
         self.cf_client = boto3.client('cloudformation')
 
 

@@ -105,3 +105,6 @@ class StackCreator:
                 break
 
 
+stk = StackCreator()
+smap = stk.create_stack_map("webpdf-")
+stk.create_stacks(smap)
