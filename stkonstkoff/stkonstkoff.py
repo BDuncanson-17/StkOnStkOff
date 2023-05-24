@@ -4,12 +4,12 @@ from stkonstkoff.cloudformations.CloudFormations import StackCreator
 from stkonstkoff.cloudformations.CloudFormations import StackDeletor
 from stkonstkoff.UserAuthentication import UserAccess
 from stkonstkoff.Utilities import Utilities
-
+:
+    Utilities.print_numbered_list(cft.get_stack_names())
 
 _SESSION = UserAccess()
 cft = CCFStacks()
-def main():
-    Utilities.print_numbered_list(cft.get_stack_names())
+def main()
 
 
 if __name__ == "__main__":
