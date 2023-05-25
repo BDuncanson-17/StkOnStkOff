@@ -1,4 +1,4 @@
-from stkonstkoff import Utilities
+import Utilities
 
 data_path = "../data/"
 

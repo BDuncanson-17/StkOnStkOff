@@ -1,4 +1,3 @@
-#pyproject.toml
 [tool.poetry]
 name = "StkOnStkOff"
 version = "0.1.0"
@@ -8,14 +7,12 @@ homepage = "https://github.com/bduncanson-17/stkonstksoff"
 classifiers = [
     "Development Status :: 3 - Alpha",
     "Intended Audience :: Developers",
-    "License :: OSI Approved :: MSI",
+    "License :: OSI Approved :: MIT License", # Adjusted the license
     "Operating System :: OS Independent",
     "Programming Language :: Python :: 3",
     "Programming Language :: Python :: 3.7",
     "Programming Language :: Python :: 3.8",
     "Programming Language :: Python :: 3.9",
-    "Programming Language :: Python :: 3.10",
-    "Programming Language :: Python :: 3.11",
     "Typing :: Typed"
 ]
 
@@ -30,7 +27,7 @@ argparse = "^1.5.0"
 [tool.poetry.dev-dependencies]
 
 [[tool.poetry.scripts]]
-my_package.insert_point = "stkonstkoff:main"
+stkonstkoff.stackonstkoff = "main" # Adjusted the script name to match your project
 
 [build-system]
 requires = ["poetry-core>=1.5.0"]
