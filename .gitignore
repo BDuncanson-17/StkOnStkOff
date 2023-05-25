@@ -34,3 +34,5 @@ docs/source/.vs
 .doctrees
 
 source/_build
+
+./data/*.db

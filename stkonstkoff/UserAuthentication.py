@@ -53,7 +53,3 @@ class UserAccess:
         new_user = UserAccess()
         return new_user.session
 
-
-STKONSTKOFFSESSION = UserAccess()
-
-print(STKONSTKOFFSESSION.attempts)

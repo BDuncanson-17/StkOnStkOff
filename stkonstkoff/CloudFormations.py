@@ -1,16 +1,18 @@
 import boto3
 import operator
 import botocore.exceptions
-from stkonstkoff.stkonstkoff import StkOnStkOffUtlities
-from stkonstkoff.UserAuthentication import STKONSTKOFFSESSION
+import time
+import Utilities
+from StkDatabase import data_path
 
 
 CE1 = botocore.exceptions.NoCredentialsError
 CE2 = botocore.exceptions.EndpointConnectionError
 
 
+
 class CFStacks:
-    def __init__(self,authenticated=None):
+    def __init__(self, sess=stkonstkoff):
         """
         Initializes CFStacks object.
 
@@ -21,8 +23,8 @@ class CFStacks:
         self.stacks = None
         self.stack_names = None
         self.deletion_order = None
-        if STKONSTKOFFSESSION.session is None:
-            self.cf_client = STKONSTKOFFSESSION.validate_session()
+        if _G_SESSION.session is None:
+            self.cf_client = _G_SESSION.validate_session()
             self.cf_client = self.set_cf_client()
             self.stacks = self.get_stack_objects()
             self.stack_names = self.get_stack_names()
@@ -84,31 +86,11 @@ class CFStacks:
 
 
 
-class StackCreator:
-
-    def __init__(self):
-        self.cf_client = boto3.client('cloudformation')
-        self.template_files = []
-        self.template_dir = []
-        self.template_map = {}
-
-    @staticmethod
-    def prompt_prefix_string():
-        add_prefix = str(
-            input("Would you like to add a prefix string to the stacks in your set like webpdf- (y/n):\n")).lower()
-        if add_prefix == 'n' or add_prefix == 'no':
-            return ""
-        prefix_str = input("Add the string you want all your stacks to start with:\n")
-        return prefix_str
-
-
-
-
-    def create_stacks(self, template_map):
+    def create_stacks(self, template_map=None):
         if template_map is None:
-            stack_mapping = stkonstkoff.StkOnStkOffUtlities.create_stack_map()
+            template_map = Utilities.create_stack_map()
 
-        for stack_name, template_filepath in stack_mapping.items():
+        for stack_name, template_filepath in template_map.items():
             try:
                 with open(template_filepath, 'r') as template_file:
                     template_body = template_file.read()
@@ -142,6 +124,53 @@ class StackCreator:
                 break
 
 
-stk = CFStacks()
+        def all_or_select(self):
+            all_stacks = input("Would you like to delete all stacks or a single stack (y/n or q to quit)?\n")
+            if all_stacks.lower() == 'q':
+                exit()
+            return all_stacks.lower() == 'y'
 
-StkOnStkOffUtlities.print_numbered_list(stk.get_stack_names())
+        def delete_stack_by_number(self, num):
+            stack_names = self.get_stack_names()
+            self.print_list_with_numbers(stack_names)
+            idx = int(input("Enter the number of the stack you want to delete: "))
+            if 1 <= idx <= len(stack_names):
+                self.delete_stack(stack_names[idx - 1])
+            else:
+                print('Invalid stack index.')
+
+        def delete_stack(self, stack_name):
+            try:
+                response = self.cf_client.describe_stacks(StackName=stack_name)
+                stack_status = response['Stacks'][0]['StackStatus']
+
+                if stack_status == 'DELETE_COMPLETE':
+                    print(f'Stack "{stack_name}" is already deleted.')
+                    return
+
+                self.cf_client.delete_stack(StackName=stack_name)
+                print(f'Deleting stack "{stack_name}"...')
+
+                while True:
+                    response = self.cf_client.describe_stacks(StackName=stack_name)
+                    stack_status = response['Stacks'][0]['StackStatus']
+
+                    if stack_status in ['DELETE_COMPLETE', 'DELETE_FAILED']:
+                        break
+
+                    time.sleep(5)
+
+                print(f'Stack "{stack_name}" deleted successfully.')
+
+            except Exception as e:
+                print(f'Failed to delete stack "{stack_name}":', str(e))
+
+        def delete_all_stacks(self):
+            stack_names = self.get_stack_names()
+            for stack_name in stack_names:
+                self.delete_stack(stack_name)
+
+        @staticmethod
+        def print_list_with_numbers(lst):
+            for i, item in enumerate(lst, 1):
+                print(f"{i}. {item}")
