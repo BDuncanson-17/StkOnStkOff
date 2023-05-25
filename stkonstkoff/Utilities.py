@@ -2,6 +2,43 @@ import os
 import subprocess
 
 
+strings = {
+    "get_prefix": [
+        "Would you like to add a prefix string to all of you stacks (y/n):\n",
+        "Add the string you want all your stacks to start with: "
+    ],
+    "num_of_stacks": [
+        "Enter the number of stacks you want to create(1-20): "
+        "Invalid input. Enter the number of stacks you want to create(1-20 or q to quit):"
+        ]
+}
+
+class StringUtilities:
+    def __init__():
+        strings = {
+            "get_prefix": [
+                "Would you like to add a prefix string to all of you stacks (y/n):\n",
+                "Add the string you want all your stacks to start with: "
+            ],
+            "num_of_stacks": [
+                "Enter the number of stacks you want to create(1-20): "
+                "Invalid input. Enter the number of stacks you want to create(1-20 or q to quit):"
+            ]
+            
+        }
+
+    def yes_no_prompt(msg=):
+        if msg is None:
+            msg = "Yes or No?:  "
+        yes_or_no = str(input(msg)).tolower
+        return yes_or_no == "y" or yes_or_no == "yes"
+    
+    def get_string()
+        if msg = None:
+            msg = "Enter your value: "
+        if validate then
+            validate_range(
+         return str(input(msg))
 class Utilities:
     def __init__(self):
         self.data_path = "../data"
