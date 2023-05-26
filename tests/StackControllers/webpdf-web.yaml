@@ -1,0 +1,60 @@
+Parameters:
+  InstanceType:
+    Description: The size of the instance to create
+    Type: String
+    Default: t2.micro
+  KeyName:
+    Description: The Key to enable SSH and HTTP access to the instance
+    Type: String
+    Default: pdfwebserver-key
+  Stage:
+    Description: Name of environment
+    Type: String
+    Default: dev
+
+Resources:
+  WebServerNode:
+    Type: 'AWS::EC2::Instance'
+    Properties:
+      InstanceType: !Ref InstanceType
+      ImageId: ami-02396cdd13e9a1257
+      KeyName: !Ref KeyName
+      IamInstanceProfile: !ImportValue webpdf-security-WebEC2InstanceProfile
+      SecurityGroupIds:
+        - !ImportValue webpdf-security-WebSecurityGroupId
+      SubnetId: !ImportValue webpdf-vpc-PublicSubnet1
+      Tags:
+        -
+          Key: "Name"
+          Value: !Join [ "-", [webpdf-c-web, !Ref Stage ]]
+      UserData:
+        Fn::Base64:
+          !Sub |
+          #!/bin/bash
+          yum update -y
+          yum install -y httpd
+          systemctl start httpd.service
+          systemctl enable httpd.service
+          echo "<!DOCTYPE html>
+          <html lang=\"en\">
+          <head>
+              <meta charset=\"UTF-8\">
+              <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">
+              <title>Stacks on Stacks on Stacks</title>
+          </head>
+          <body>
+              <h1>Stacks on Stacks on Stacks</h1>
+          </body>
+          </html>" | sudo tee /var/www/index.html > /dev/null
+
+Outputs:
+  WebServerURL:
+    Description: URL to access our Apache server
+    Value: !Join
+      - ''
+      - - 'http://'
+        - !GetAtt WebServerNode.PublicIp
+        - ':80'
+    Export:
+      Name: !Sub '${AWS::StackName}-WebServerURL'
+
