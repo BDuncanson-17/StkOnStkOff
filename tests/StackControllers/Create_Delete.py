@@ -1,15 +1,49 @@
 #!/usr/bin/env python3
 import os
-import time
+import sys
 import argparse
 import boto3
+
+
+def print_numbered_list(items):
+    for index, item in enumerate(items, start=1):
+        print(f"{index}. {item}")
 
 
 class CloudFormationDependencyError(Exception):
     pass
 
 
-class StackDeletor:
+def lint_template():
+    pass
+
+
+class CFStack:
+    pass
+
+
+class CFStack:
+    def __init__(self, session=boto3.Session(), zone=None):
+        self.cf_client = session.client('cloudformation') if zone is None else session.client('cloudformation',
+                                                                                              region_name=zone,)
+
+    pass
+
+    def get_stack_info(self):
+
+        stack_names = []
+        try:
+            response = self.cf_client.describe_stacks()
+            stacks = response["Stacks"]
+            for stack in stacks:
+                stack_names.append(stack["StackName"])
+            return stack_names
+        except Exception as e:
+            print("Error, exiting")
+            return None
+
+
+class StackDeleter(CFStack):
     def __init__(self):
         self.stack_names = self.get_stack_info()
 
@@ -22,7 +56,7 @@ class StackDeletor:
             self.delete_selections(self.stack_names)
             return
 
-        self.print_numbered_list(self.stack_names)
+        print_numbered_list(self.stack_names)
         user_input = input("Are these the stacks you want to delete? (y/n): ")
         if user_input.lower() == "y":
             self.delete_selections(self.stack_names)
@@ -62,16 +96,8 @@ class StackDeletor:
                 except boto3.exceptions.botocore.exceptions.BotoCoreError:
                     print(f"Stack {stack} was deleted")
 
-    @staticmethod
-    def print_numbered_list(items):
-        for index, item in enumerate(items, start=1):
-            print(f"{index}. {item}")
 
-
-class StackCreator:
-    class CloudFormationDependencyError(Exception):
-        pass
-
+class StackCreator(CFStack):
     def __init__(self, directory):
         """
         Initializes the StackCreator.
@@ -99,11 +125,11 @@ class StackCreator:
                 with open(file_path, "r") as file:
                     template_contents = file.read()
                     file_name = os.path.splitext(filename)[0]
-                    cf_templates[file_name] = template_contents
+                    cf_templates[filename] = template_contents
 
         return cf_templates
 
-    def create_all_stacks(self, directory=None, stack_mapping=None, attempts=3):
+    def create_all_stacks(self, directory=None, stack_mapping=None, failed_map={}):
         """
         Creates all CloudFormation stacks from the YAML files in the specified directory,
         waiting for completion and handling rollback if necessary.
@@ -119,7 +145,7 @@ class StackCreator:
 
         if stack_mapping is None:
             stack_mapping = self.read_cf_templates(directory)
-        max = 3(stack_mappings)*3
+        max = len(stack_mapping) * 3
         i = 0
         if stack_mapping:
             stack_names = list(stack_mapping.keys())
@@ -133,10 +159,11 @@ class StackCreator:
                     self._create_stack(stack_name, template_body)
                     print(f"Stack '{stack_name}' creation completed.")
                     stack_mapping.remove(stack_mapping)
-                    i+=1
+                    i += 1
 
                 except CloudFormationDependencyError:
-                    print(f"Stack '{stack_name}' creation failed due to dependency error. Moving it to the end of the stack list.")
+                    print(
+                        f"Stack '{stack_name}' creation failed due to dependency error. Moving it to the end of the stack list.")
                     tmp = stack_mapping[stack_name]
                     stack_mapping.remove(stack_name)
                     stack_mapping.append(tmp)
@@ -145,7 +172,7 @@ class StackCreator:
         else:
             print("No templates were provided")
 
-    def _create_stack(self, stack_name, template_body):
+    def create_stack(self, stack_name, template_body):
         """
         Creates a CloudFormation stack using the provided template body.
 
@@ -184,6 +211,7 @@ class StackCreator:
 
 
 def main():
+    sys.argv[0] = "-da"
     # Create the argument parser
     parser = argparse.ArgumentParser(description="CloudFormation Stack Management")
 
@@ -194,16 +222,14 @@ def main():
                         help="Delete all CloudFormation stacks")
 
     # Parse the command-line arguments
-    args = parser.parse_args()
-
+    args = parser.parse_args(sys.argv)
+    CF = CFStack()
     # Check the specified options and call the respective functions
     if args.create_all:
-        stkcreator_obj = StackCreator('.')
-        stkcreator_obj.create_all_stacks()
+        StackCreator('.').create_all_stacks()
 
     elif args.delete_all:
-        stack_deletor = StackDeletor()
-        stack_deletor.confirm_delete()
+        StackDeleter().confirm_delete()
     else:
         parser.print_help()
 
