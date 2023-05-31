@@ -1,18 +1,4 @@
-import os
-import subprocess
-
-
-class Utilities:
-    """
-    A utility class containing various static methods for general purpose operations.
-    """
-
-    def __init__(self):
-        """
-        Initializer method. Currently does nothing.
-        """
-        pass
-
+class Conversion:
     @staticmethod
     def convert_dictionary_to_list(dictionary):
         """
@@ -27,6 +13,38 @@ class Utilities:
             entry = f"{key}: {value}"
             result.append(entry)
         return result
+    def convert_dictionary_to_list(dictionary):
+        """
+        Converts a dictionary into a list of key-value string representations.
+        Args:
+            dictionary (dict): The dictionary to convert.
+        Returns:
+            list: The resulting list of key-value pairs in string format.
+        """
+        result = []
+        for key, value in dictionary.items():
+            entry = f"{key}: {value}"
+            result.append(entry)
+        return result
+
+class Printing:
+    def __init__(self):
+        """
+        Initializer method. Currently does nothing.
+        """
+        pass
+
+    def process_data(data):
+        if isinstance(data, dict):
+            for key, value in data.items():
+                if isinstance(key, str) and isinstance(value, str):
+                    print(f"Key: {key}, Value: {value}")
+        elif isinstance(data, list):
+            for element in data:
+                if isinstance(element, str):
+                    print(element)
+        else:
+            print(ErrorHander.cls_strings[0])
 
     @staticmethod
     def print_numbered_list(lst):
@@ -39,7 +57,7 @@ class Utilities:
             print(f"{i}. {item}")
 
     @staticmethod
-    def print_numbered_dict(dictionary):
+    def print_data_structure(data_type):
         """
         Prints a dictionary with numbered items, one key-value pair per row.
         Args:
