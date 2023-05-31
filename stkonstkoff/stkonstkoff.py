@@ -1,13 +1,32 @@
 import argparse
 from CloudFormations.CFStacks import CFStack
-from Utilities import *
 import boto3
-
 import Utilities
+
+_SESS = boto3.Session()
+def delete_stks(cf_stacks=None, all_flag=False):
+    if cf_stacks is None:
+        cf_stacks = CFStack(_SESS)
+    if cf_stacks.num_stacks == 0:
+        question = "No stacks to delete would you like to create stacks"
+        if Utilities.yes_or_no(question):
+            return create_stks()
+        else:
+            exit()
+    elif cf_stacks.num_stacks == 1:
+        question = f"would you like to delete {cf_stacks.stacks[0]}"
+        if Utilities.yes_or_no(question):
+            cf_stacks.delete_selections(cf_stacks.stacks)
+        else:
+            exit()
+    if cf_stacks.num_stacks == 2:
+        selection = Utilities.ask_for_choice()
+        cf_stacks.delete_selections(selection)
+def create_stks():
 
 
 def main():
-    _SESS = boto3.Session()
+
     cf = CFStack(_SESS)
     if cf.num_stacks:
         print("Current stacks:")

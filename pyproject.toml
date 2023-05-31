@@ -26,8 +26,8 @@ argparse = "^1.5.0"
 
 [tool.poetry.dev-dependencies]
 
-[[tool.poetry.scripts]]
-stkonstkoff.stackonstkoff = "main" # Adjusted the script name to match your project
+[tool.poetry.scripts]
+stkonstkoff = "stkonstkoff.stkonstkoff:main"
 
 [build-system]
 requires = ["poetry-core>=1.5.0"]

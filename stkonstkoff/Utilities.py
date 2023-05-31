@@ -8,6 +8,30 @@ def print_numbered_list(items):
     """
     for index, item in enumerate(items, start=1):
         print(f"{index}. {item}")
+
+def ask_for_choice(items):
+    """
+    Displays a numbered list of items and asks the user to choose one.
+
+    Args:
+        items (list): The list of items to choose from.
+
+    Returns:
+        The chosen item.
+    """
+    while True:
+        print_numbered_list(items)
+        try:
+            choice = int(input("Enter the number of your would like to delete: "))
+            if 1 <= choice <= len(items):
+                return items[choice - 1]
+            elif choice == 'all':
+                return items
+            else:
+                print(f"Please enter a number between 1 and {len(items)} or all\n")
+        except ValueError:
+            print("Please enter a valid number.\n")
+
 def convert_dictionary_to_list(dictionary):
     """
     Converts a dictionary into a list of key-value string representations.
